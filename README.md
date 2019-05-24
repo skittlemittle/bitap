@@ -1,5 +1,11 @@
 # bitap
-The bitap algorithm written in C.
+The bitap algorithm written in C, with printf's everywhere so you can see
+how it works.
+
+NOTE: printf can't print in binary so I'm using a function `print_bits` to do it,
+      and it takes the size of the thing it's going to print, and I pass 1UL
+      as the size each time, so if you want to see more bits just set the 
+      size to sizeof(thing_you_wanna_print)
 
 #How this thing works:
 you give it some text and a pattern to find, for this example:
@@ -67,5 +73,23 @@ R                         11110110
 ```
 
 and each time through the loop check to see if`0 == (R & (1UL << pattern_len))`
-returns true, if it does you have a match.
+returns true, if it does you have a match, for our example this looks like:
 
+```
+R & (1UL << m)            00001000 S
+
+R & (1UL << m)            00001000 K
+
+R & (1UL << m)            00001000 A
+
+R & (1UL << m)            00001000 T
+
+# we found a match
+R & (1UL << m)            00000000 E
+```
+this means it finds a match at the last char of the match, so when returning 
+the match it does it like this:
+``` c
+if (0 == (R & (1UL << m)))
+            return (text + i - m) + 1;
+```
