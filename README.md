@@ -4,10 +4,11 @@ how it works.
 
 NOTE: printf can't print in binary so I'm using a function `print_bits` to do it,
       and it takes the size of the thing it's going to print, and I pass 1UL
-      as the size each time, so if you want to see more bits just set the 
-      size to sizeof(thing_you_wanna_print)
+      as the size each time, so if you want to see more bits pass 
+      `sizeof(thing_you_wanna_print)` as the size.
 
-#How this thing works:
+# How this thing works:
+
 you give it some text and a pattern to find, for this example:
 text: `skate` pattern: `ate`
 
@@ -27,9 +28,9 @@ pattern_mask[pattern[i]] &= ~(1UL << i);
 
 so `ate` gets a pattern mask of:
 ```
-11111110
-11111101
-11111011
+11111110  a
+11111101  t
+11111011  e
 ```
 ### Finding a match:
 
@@ -40,8 +41,8 @@ R |= pattern_mask[text[i]];
 R <<= 1;
 ```
 
-This goes and OR's R with the pattern mask of each charachter in the text,
-*chars that dont have a pattern mask dont matter since the mask is made for
+This goes and OR's R with the pattern mask of each character in the text,
+*chars that don't have a pattern mask don't matter since the mask is made for
 each char in the pattern and thats all we want.*
 then it left shifts R by 1 bit.
 
@@ -51,28 +52,28 @@ in our case that looks like so:
 # notice how chars that don't have a mask
 # just show up as 11111111
 
-S
+#S
 pattern_mask of the text  11111111
 R                         11111110
 
-K
+#K
 pattern_mask of the text  11111111
 R                         11111110
 
-A
+#A
 pattern_mask of the text  11111110
 R                         11111100
 
-T
+#T
 pattern_mask of the text  11111101
 R                         11111010
 
-E
+#E
 pattern_mask of the text  11111011
 R                         11110110
 ```
 
-and each time through the loop check to see if`0 == (R & (1UL << pattern_len))`
+Each iteration through the loop check to see if`0 == (R & (1UL << pattern_len))`
 returns true, if it does you have a match, for our example this looks like:
 
 ```
@@ -87,7 +88,7 @@ R & (1UL << m)            00001000 T
 # we found a match
 R & (1UL << m)            00000000 E
 ```
-this means it finds a match at the last char of the match, so when returning 
+This means it finds a match at the last char of the match, so when returning 
 the match it does it like this:
 ``` c
 if (0 == (R & (1UL << m)))
